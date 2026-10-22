@@ -1,0 +1,1 @@
+Upload the Canva video to this folder as `iced-latte.mp4`. The homepage expects `assets/iced-latte.mp4`.
