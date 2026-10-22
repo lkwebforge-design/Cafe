@@ -72,28 +72,36 @@ const toggle=document.querySelector('.menu-toggle'),links=document.querySelector
 toggle.addEventListener('click',()=>{const open=links.classList.toggle('open');toggle.setAttribute('aria-expanded',String(open));});
 links.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{links.classList.remove('open');toggle.setAttribute('aria-expanded','false')}));
 const video=document.getElementById('heroVideo');
+const hero=document.getElementById('top');
+video.removeAttribute('autoplay');
+video.autoplay=false;
 video.muted=true;
 video.playsInline=true;
-video.autoplay=false;
 video.pause();
-let videoWasInView=false;
+
+// IMPORTANT: do not play on the initial page load, even though the hero is visible.
+// The visitor must scroll away from the hero and then scroll back to it.
+let heroHasBeenLeft=false;
+let heroVideoIsPlaying=false;
 const heroVideoObserver=new IntersectionObserver(entries=>{
   for(const entry of entries){
-    if(entry.isIntersecting && !videoWasInView){
-      videoWasInView=true;
-      // Start only after the visitor scrolls and the hero enters the viewport.
-      video.currentTime=0;
-      const playAttempt=video.play();
-      if(playAttempt && playAttempt.catch) playAttempt.catch(()=>{});
-    }else if(!entry.isIntersecting && videoWasInView){
-      videoWasInView=false;
+    if(!entry.isIntersecting){
+      heroHasBeenLeft=true;
+      heroVideoIsPlaying=false;
       video.pause();
       try { video.currentTime=0; } catch(e) {}
+    }else if(heroHasBeenLeft && !heroVideoIsPlaying){
+      heroVideoIsPlaying=true;
+      video.currentTime=0;
+      const playAttempt=video.play();
+      if(playAttempt && playAttempt.catch){
+        playAttempt.catch(()=>{heroVideoIsPlaying=false;});
+      }
     }
   }
 },{threshold:0.35});
-heroVideoObserver.observe(document.getElementById('top'));
-video.addEventListener('error',()=>{console.error('Hero video failed to load:',video.currentSrc,video.error);});
+heroVideoObserver.observe(hero);
+video.addEventListener('error',()=>{heroVideoIsPlaying=false;console.error('Hero video failed to load:',video.currentSrc,video.error);});
 if('IntersectionObserver' in window){const revealObserver=new IntersectionObserver(entries=>entries.forEach(entry=>{if(entry.isIntersecting){entry.target.classList.add('visible');revealObserver.unobserve(entry.target)}}),{threshold:.12});document.querySelectorAll('.reveal').forEach(el=>revealObserver.observe(el));}else{document.querySelectorAll('.reveal').forEach(el=>el.classList.add('visible'))}
 </script>
 </body>
