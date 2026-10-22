@@ -76,17 +76,18 @@ links.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{links.cla
 const video=document.getElementById('heroVideo');
 const hero=document.getElementById('top');
 const heroEndCopy=document.getElementById('heroEndCopy');
-// Keep the video muted and inline for mobile Safari. Prime decoding once so
-// scroll-driven seeking works more reliably on browsers that defer first-frame decode.
+// Mobile Safari and other browsers: initialize the decoder without an event
+// listener racing to pause playback before the play() promise settles.
 video.removeAttribute('autoplay');
 video.removeAttribute('loop');
 video.removeAttribute('controls');
 video.autoplay=false;
 video.loop=false;
 video.controls=false;
-video.defaultMuted=true;
 video.muted=true;
+video.defaultMuted=true;
 video.playsInline=true;
+video.setAttribute('muted','');
 video.setAttribute('playsinline','');
 video.setAttribute('webkit-playsinline','');
 video.preload='auto';
@@ -94,78 +95,74 @@ video.preload='auto';
 let videoDuration=0;
 let lastScrubTime=-1;
 let metadataReady=false;
-let primeAttempted=false;
-let scrubQueued=false;
+let priming=false;
+let primed=false;
+let lastProgress=0;
 
 function scrubHeroVideo(){
   const maxScroll=hero.offsetHeight-window.innerHeight;
-  if(maxScroll<=0 || !metadataReady || !videoDuration || video.readyState < 1) return;
+  if(maxScroll<=0) return;
   const rect=hero.getBoundingClientRect();
   const progress=Math.max(0,Math.min(1,(-rect.top)/maxScroll));
-  const targetTime=Math.min(Math.max(0,progress*videoDuration),Math.max(0,videoDuration-0.05));
+  lastProgress=progress;
   const showEndCopy=progress<=0.015 || progress>=0.94;
   document.querySelector('.nav').classList.toggle('hero-finished',progress>=1);
   heroEndCopy.classList.toggle('is-visible',showEndCopy);
   heroEndCopy.classList.toggle('is-hidden-during-scrub',!showEndCopy);
   heroEndCopy.setAttribute('aria-hidden',String(!showEndCopy));
 
-  // Avoid hammering the decoder with repeated seeks while scrolling quickly.
-  if(Math.abs(targetTime-lastScrubTime)>0.025 && !video.seeking){
+  if(!metadataReady || !videoDuration || video.readyState < 2) return;
+  const targetTime=Math.min(Math.max(0,progress*videoDuration),Math.max(0,videoDuration-0.08));
+  if(!video.seeking && Math.abs(targetTime-lastScrubTime)>0.04){
     try {
       video.currentTime=targetTime;
       lastScrubTime=targetTime;
-    } catch(e) {
-      // Some browsers only allow seeking after more media data has arrived.
-    }
-  } else if(video.seeking) {
-    scrubQueued=true;
+    } catch(e) {}
   }
 }
 
-function primeVideoForScrubbing(){
-  if(primeAttempted || !metadataReady) return;
-  primeAttempted=true;
-  // Muted inline playback is permitted by most mobile browsers. Starting and
-  // immediately pausing once helps Safari initialise its decoder before seeks.
-  const playPromise=video.play();
-  if(playPromise && typeof playPromise.then==='function'){
-    playPromise.then(()=>{
-      video.pause();
-      try { video.currentTime=0; lastScrubTime=-1; } catch(e) {}
-      scrubHeroVideo();
-    }).catch(()=>{
-      video.pause();
-      scrubHeroVideo();
-    });
-  } else {
+async function primeVideoForScrubbing(){
+  if(priming || primed || !metadataReady) return;
+  priming=true;
+  try {
+    // Let muted playback initialize the decoder, then pause only after it starts.
+    await video.play();
     video.pause();
+    primed=true;
+    lastScrubTime=-1;
     scrubHeroVideo();
+  } catch(e) {
+    // If autoplay is blocked, wait for enough data and rely on direct seeking.
+    video.pause();
+  } finally {
+    priming=false;
   }
 }
 
 video.addEventListener('loadedmetadata',()=>{
   videoDuration=Number.isFinite(video.duration)?video.duration:0;
   metadataReady=videoDuration>0;
-  video.pause();
   lastScrubTime=-1;
   scrubHeroVideo();
   primeVideoForScrubbing();
 });
-video.addEventListener('loadeddata',scrubHeroVideo);
-video.addEventListener('canplay',scrubHeroVideo);
-video.addEventListener('seeked',()=>{
-  if(scrubQueued){
-    scrubQueued=false;
-    scrubHeroVideo();
-  }
+video.addEventListener('loadeddata',()=>{
+  scrubHeroVideo();
+  primeVideoForScrubbing();
 });
-video.addEventListener('play',()=>{
-  // Playback is only used to initialise decoding; normal motion is scroll-only.
-  if(metadataReady) requestAnimationFrame(()=>video.pause());
+video.addEventListener('canplay',()=>{
+  scrubHeroVideo();
+  primeVideoForScrubbing();
+});
+video.addEventListener('seeked',()=>{
+  if(Math.abs(lastProgress*videoDuration-video.currentTime)>0.2) scrubHeroVideo();
+});
+video.addEventListener('error',()=>{
+  console.error('Hero video failed to load:', video.error ? video.error.code : 'unknown');
 });
 window.addEventListener('scroll',scrubHeroVideo,{passive:true});
 window.addEventListener('resize',scrubHeroVideo);
-document.addEventListener('visibilitychange',()=>{if(!document.hidden) video.pause();});
+document.addEventListener('visibilitychange',()=>{if(document.hidden) video.pause();});
 video.load();
 if('IntersectionObserver' in window){const revealObserver=new IntersectionObserver(entries=>entries.forEach(entry=>{if(entry.isIntersecting){entry.target.classList.add('visible');revealObserver.unobserve(entry.target)}}),{threshold:.12});document.querySelectorAll('.reveal').forEach(el=>revealObserver.observe(el));}else{document.querySelectorAll('.reveal').forEach(el=>el.classList.add('visible'))}
 </script>
