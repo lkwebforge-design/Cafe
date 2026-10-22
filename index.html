@@ -32,7 +32,7 @@ footer{background:var(--espresso);color:var(--cream);padding:34px clamp(24px,8vw
 </header>
 <main>
   <section class="hero" id="top" aria-label="Iced Latte coffee">
-    <video class="hero-video" id="heroVideo" autoplay muted loop playsinline preload="auto" poster="">
+    <video class="hero-video" id="heroVideo" muted loop playsinline preload="metadata" poster="">
       <source src="assets/iced-latte.mp4" type="video/mp4">
     </video>
     <div class="hero-shade"></div>
@@ -73,10 +73,22 @@ toggle.addEventListener('click',()=>{const open=links.classList.toggle('open');t
 links.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{links.classList.remove('open');toggle.setAttribute('aria-expanded','false')}));
 const video=document.getElementById('heroVideo');
 video.muted=true;video.playsInline=true;
-const startHeroVideo=()=>{if(!video||!video.querySelector('source'))return;const p=video.play();if(p&&p.catch)p.catch(()=>{video.controls=true;});};
-video.addEventListener('loadeddata',startHeroVideo,{once:true});
+let heroVideoRequested=false;
+const heroVideoObserver=new IntersectionObserver(entries=>{
+  entries.forEach(entry=>{
+    if(entry.isIntersecting){
+      heroVideoRequested=true;
+      const playAttempt=video.play();
+      if(playAttempt&&playAttempt.catch)playAttempt.catch(()=>{});
+    }else{
+      video.pause();
+      if(!video.ended && video.readyState>0)video.currentTime=0;
+      heroVideoRequested=false;
+    }
+  });
+},{threshold:0.35});
+heroVideoObserver.observe(video);
 video.addEventListener('error',()=>{console.error('Hero video failed to load:',video.currentSrc,video.error);});
-if('IntersectionObserver' in window){const videoObserver=new IntersectionObserver(entries=>{entries.forEach(entry=>{if(entry.isIntersecting){startHeroVideo();}else{video.pause();}})},{threshold:.15});videoObserver.observe(video);}else{startHeroVideo();}
 if('IntersectionObserver' in window){const revealObserver=new IntersectionObserver(entries=>entries.forEach(entry=>{if(entry.isIntersecting){entry.target.classList.add('visible');revealObserver.unobserve(entry.target)}}),{threshold:.12});document.querySelectorAll('.reveal').forEach(el=>revealObserver.observe(el));}else{document.querySelectorAll('.reveal').forEach(el=>el.classList.add('visible'))}
 </script>
 </body>
