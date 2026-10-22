@@ -20,6 +20,9 @@ section{padding:clamp(76px,10vw,140px) clamp(24px,8vw,112px)}.section-kicker{col
 footer{background:var(--espresso);color:var(--cream);padding:34px clamp(24px,8vw,112px);display:flex;align-items:center;justify-content:space-between;gap:20px;font-size:.75rem;color:rgba(246,238,229,.65)}footer .brand{color:var(--cream)}.footer-links{display:flex;gap:20px}.reveal{opacity:0;transform:translateY(22px);transition:opacity .7s ease,transform .7s ease}.reveal.visible{opacity:1;transform:translateY(0)}
 @media(max-width:760px){.nav{height:70px}.menu-toggle{display:block}.navlinks{display:none;position:absolute;top:70px;left:16px;right:16px;background:rgba(56,35,31,.96);padding:22px;border:1px solid rgba(255,255,255,.15);border-radius:18px;flex-direction:column;align-items:stretch;gap:20px}.navlinks.open{display:flex}.nav-cta{text-align:center}.hero{height:350svh;min-height:350svh;padding:0}.hero-visual{height:100dvh;margin-bottom:-100dvh}.hero-video{object-fit:cover;object-position:57% center}.hero-shade{background:linear-gradient(90deg,rgba(44,25,22,.6),rgba(44,25,22,.25)),linear-gradient(0deg,rgba(36,20,18,.4),transparent 55%)}.hero-inner{width:100%;height:100%;min-height:0;padding:clamp(125px,18vh,165px) 24px 110px}.hero h1{font-size:clamp(3.8rem,17vw,6rem)}.hero-copy{font-size:.93rem}.scroll-cue{bottom:22px}.intro{grid-template-columns:1fr;gap:16px}.section-head{display:block}.section-head p{margin-top:16px}.menu-grid{grid-template-columns:1fr}.menu-card{min-height:205px}.moment{grid-template-columns:1fr}.moment-copy{padding:70px 26px}.moment-art{min-height:300px}footer{align-items:flex-start;flex-direction:column}.footer-links{flex-wrap:wrap}}
 @media(max-width:380px){.brand{font-size:1.15rem}.menu-toggle{padding:9px 11px}.hero h1{font-size:clamp(3.25rem,16vw,4.1rem)}.hero-copy{font-size:.88rem}.hero-actions{gap:16px}.button{padding:13px 18px}.scroll-cue{font-size:.58rem}}\n@media(orientation:landscape) and (max-height:500px){.hero{height:max(350svh,2100px);min-height:max(350svh,2100px)}.hero-visual{height:100dvh;margin-bottom:-100dvh}.hero-inner{height:100%;min-height:0;padding-top:125px;padding-bottom:95px}.hero h1{font-size:clamp(3.5rem,9vw,5.5rem)}}\n@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{transition:none!important;animation:none!important}.reveal{opacity:1;transform:none}}
+
+.gallery-grid{max-width:1200px;margin:42px auto 0;display:grid;grid-template-columns:repeat(12,1fr);grid-auto-rows:100px;gap:14px}.gallery-item{position:relative;overflow:hidden;background:#d9c0b1;margin:0}.gallery-item:nth-child(1){grid-column:span 7;grid-row:span 3}.gallery-item:nth-child(2),.gallery-item:nth-child(3){grid-column:span 5;grid-row:span 2}.gallery-item:nth-child(n+4){grid-column:span 4;grid-row:span 2}.gallery-item img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s}.gallery-item:hover img{transform:scale(1.04)}.gallery-item figcaption{position:absolute;bottom:0;left:0;right:0;padding:32px 18px 14px;color:#fff;background:linear-gradient(transparent,rgba(0,0,0,.65));font-size:.8rem}.booking-section{background:var(--paper)}.booking-wrap,.location-wrap{max-width:1200px;margin:auto;display:grid;grid-template-columns:.9fr 1.1fr;gap:6vw;align-items:center}.booking-copy p,.location-details p{color:var(--muted);line-height:1.9}.booking-form{background:#fffaf5;padding:clamp(22px,4vw,42px);display:grid;grid-template-columns:1fr 1fr;gap:16px}.booking-form label{display:flex;flex-direction:column;gap:8px;font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}.booking-form input,.booking-form select,.booking-form textarea{width:100%;padding:12px;border:1px solid var(--line);background:white;font:inherit;color:var(--espresso)}.booking-form .wide,.booking-form button{grid-column:1/-1}.booking-form button{border:0;cursor:pointer;font:inherit}.small-note{font-size:.75rem;color:var(--muted);line-height:1.6}.location-section{background:#d9c0b1}.location-map iframe{border:0;width:100%;height:360px}.location-link{display:inline-block;margin-top:12px;padding:13px 18px;background:var(--espresso);color:var(--cream);border-radius:999px;font-size:.8rem;font-weight:700}
+@media(max-width:760px){.gallery-grid{grid-template-columns:1fr 1fr;grid-auto-rows:140px;gap:10px}.gallery-item:nth-child(n){grid-column:span 1;grid-row:span 1}.gallery-item:first-child{grid-column:span 2;grid-row:span 2}.booking-wrap,.location-wrap{grid-template-columns:1fr;gap:26px}.booking-form{grid-template-columns:1fr}.booking-form .wide,.booking-form button{grid-column:auto}.location-map iframe{height:300px}}
 </style>
 </head>
 <body>
@@ -27,7 +30,7 @@ footer{background:var(--espresso);color:var(--cream);padding:34px clamp(24px,8vw
   <a class="brand" href="#top" aria-label="Velora Café home">velora<span>.</span>café</a>
   <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="navlinks">Menu ☰</button>
   <nav class="navlinks" id="navlinks" aria-label="Main navigation">
-    <a href="#story">Our story</a><a href="#menu">The menu</a><a href="#moment">Our philosophy</a><a class="nav-cta" href="#visit">Find your cup ➜</a>
+    <a href="#story">Our story</a><a href="menu.html">Menu</a><a href="gallery.html">Gallery</a><a href="#booking">Book a table</a><a href="#location">Location</a><a class="nav-cta" href="#booking">Reserve ➜</a>
   </nav>
 </header>
 <main>
@@ -64,6 +67,32 @@ footer{background:var(--espresso);color:var(--cream);padding:34px clamp(24px,8vw
     <div class="moment-copy reveal"><div class="section-kicker">03 — Our philosophy</div><h2 class="section-title">Not just coffee.<br>A moment.</h2><p>Take the long way through your morning. Put your phone down for a minute. Stay for one more sip. We believe the best things happen when you give them time.</p><a class="text-link" href="#visit">Make a little room for you ➜</a></div>
     <div class="moment-art" aria-hidden="true"></div>
   </section>
+
+  <section id="gallery" class="gallery-section">
+    <div class="section-head reveal"><div><div class="section-kicker">A look inside</div><h2 class="section-title">Little moments,<br>beautifully made.</h2></div><p>Warm light, thoughtful coffee, and the little details that make a café feel like your place.</p></div>
+    <div class="gallery-grid">
+      <figure class="gallery-item"><img loading="lazy" src="https://images.unsplash.com/photo-1445116572660-236099ec97a0?auto=format&fit=crop&w=1200&q=85" alt="Warm café interior"><figcaption>A place to slow down</figcaption></figure>
+      <figure class="gallery-item"><img loading="lazy" src="https://images.unsplash.com/photo-1461023058943-07fcbe16d735?auto=format&fit=crop&w=900&q=85" alt="Iced coffee"><figcaption>Your everyday favourite</figcaption></figure>
+      <figure class="gallery-item"><img loading="lazy" src="https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=900&q=85" alt="Fresh cup of coffee"><figcaption>Made with care</figcaption></figure>
+      <figure class="gallery-item"><img loading="lazy" src="https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=900&q=85" alt="Coffee and café details"><figcaption>Small rituals</figcaption></figure>
+      <figure class="gallery-item"><img loading="lazy" src="https://images.unsplash.com/photo-1511920170033-f8396924c348?auto=format&fit=crop&w=900&q=85" alt="Barista making coffee"><figcaption>Crafted slowly</figcaption></figure>
+      <figure class="gallery-item"><img loading="lazy" src="https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&w=900&q=85" alt="Cosy coffee shop"><figcaption>Stay a little longer</figcaption></figure>
+    </div>
+  </section>
+  <section id="booking" class="booking-section">
+    <div class="booking-wrap"><div class="booking-copy reveal"><div class="section-kicker">Save yourself a seat</div><h2 class="section-title">Your table<br>is waiting.</h2><p>Send a request for your preferred date, time, and party size. Your booking is only confirmed when the café replies.</p><p class="small-note">The form opens your email app to send the request. The contact email must be replaced with the café's real address before launch.</p></div>
+    <form class="booking-form" id="bookingForm">
+      <label>Your name<input name="name" autocomplete="name" required placeholder="Full name"></label><label>Email<input name="email" type="email" autocomplete="email" required placeholder="you@example.com"></label>
+      <label>Date<input name="date" type="date" required></label><label>Preferred time<select name="time" required><option value="">Choose time</option><option>09:00</option><option>10:00</option><option>11:00</option><option>12:00</option><option>13:00</option><option>14:00</option><option>15:00</option><option>16:00</option><option>17:00</option><option>18:00</option><option>19:00</option></select></label>
+      <label>Guests<select name="guests"><option>1</option><option selected>2</option><option>3</option><option>4</option><option>5</option><option>6+</option></select></label><label>Occasion<input name="occasion" placeholder="Optional"></label>
+      <label class="wide">Notes<textarea name="notes" rows="3" placeholder="Any special requests?"></textarea></label><button class="button" type="submit">Request a booking ➜</button>
+    </form></div>
+  </section>
+  <section id="location" class="location-section"><div class="location-wrap">
+    <div class="location-details reveal"><div class="section-kicker">Come find your calm</div><h2 class="section-title">Meet you<br>over coffee.</h2><p>Use the map search to look for Velora Café. Add the café's verified address and map pin when available so guests can navigate to the right place.</p><a class="location-link" href="https://www.google.com/maps/search/?api=1&query=Velora%20Cafe" target="_blank" rel="noopener">Find us on Google Maps ➜</a></div>
+    <div class="location-map"><iframe loading="lazy" title="Velora Cafe map search" src="https://maps.google.com/maps?q=Velora%20Cafe&t=&z=13&ie=UTF8&iwloc=&output=embed"></iframe></div>
+  </div></section>
+
   <section class="visit" id="visit">
     <div class="section-kicker">Your table is waiting</div><h2 class="section-title">Come as you are.<br>Leave a little lighter.</h2><p>Whether it's your first cup or your everyday order, there's always room for one more at Velora Café.</p><a class="button" href="mailto:hello@veloracafe.example?subject=Hello%20Velora%20Cafe">Say hello <span aria-hidden="true">➜</span></a>
   </section>
@@ -164,6 +193,10 @@ window.addEventListener('scroll',scrubHeroVideo,{passive:true});
 window.addEventListener('resize',scrubHeroVideo);
 document.addEventListener('visibilitychange',()=>{if(document.hidden) video.pause();});
 video.load();
+
+const bookingForm=document.getElementById('bookingForm');
+if(bookingForm) bookingForm.addEventListener('submit',event=>{event.preventDefault();const d=new FormData(bookingForm);const lines=['Velora Cafe booking request','','Name: '+d.get('name'),'Email: '+d.get('email'),'Date: '+d.get('date'),'Time: '+d.get('time'),'Guests: '+d.get('guests'),'Occasion: '+(d.get('occasion')||'Not specified'),'Notes: '+(d.get('notes')||'None')];window.location.href='mailto:hello@veloracafe.example?subject='+encodeURIComponent('Velora Cafe booking request')+'&body='+encodeURIComponent(lines.join('\n'));});
+
 if('IntersectionObserver' in window){const revealObserver=new IntersectionObserver(entries=>entries.forEach(entry=>{if(entry.isIntersecting){entry.target.classList.add('visible');revealObserver.unobserve(entry.target)}}),{threshold:.12});document.querySelectorAll('.reveal').forEach(el=>revealObserver.observe(el));}else{document.querySelectorAll('.reveal').forEach(el=>el.classList.add('visible'))}
 </script>
 </body>
