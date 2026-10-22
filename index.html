@@ -77,12 +77,14 @@ video.removeAttribute('autoplay');
 video.autoplay=false;
 video.muted=true;
 video.playsInline=true;
+video.preload='auto';
 video.pause();
 
-// IMPORTANT: do not play on the initial page load, even though the hero is visible.
-// The visitor must scroll away from the hero and then scroll back to it.
+// Keep the video element visible as the hero background, showing its first frame.
+// Do not start playback until the visitor has scrolled away and returned to the hero.
 let heroHasBeenLeft=false;
 let heroVideoIsPlaying=false;
+video.addEventListener('loadeddata',()=>{ if(!heroVideoIsPlaying) video.pause(); });
 const heroVideoObserver=new IntersectionObserver(entries=>{
   for(const entry of entries){
     if(!entry.isIntersecting){
@@ -92,7 +94,7 @@ const heroVideoObserver=new IntersectionObserver(entries=>{
       try { video.currentTime=0; } catch(e) {}
     }else if(heroHasBeenLeft && !heroVideoIsPlaying){
       heroVideoIsPlaying=true;
-      video.currentTime=0;
+      try { video.currentTime=0; } catch(e) {}
       const playAttempt=video.play();
       if(playAttempt && playAttempt.catch){
         playAttempt.catch(()=>{heroVideoIsPlaying=false;});
