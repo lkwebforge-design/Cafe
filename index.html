@@ -33,7 +33,7 @@ footer{background:var(--espresso);color:var(--cream);padding:34px clamp(24px,8vw
 <main>
   <section class="hero" id="top" aria-label="Iced Latte coffee">
     <div class="hero-visual" aria-hidden="true">
-      <video class="hero-video" id="heroVideo" muted playsinline preload="auto" poster="">
+      <video class="hero-video" id="heroVideo" muted playsinline preload="metadata" poster="">
         <source src="assets/iced-latte.mp4" type="video/mp4">
       </video>
       <div class="hero-shade"></div>
@@ -75,34 +75,45 @@ toggle.addEventListener('click',()=>{const open=links.classList.toggle('open');t
 links.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{links.classList.remove('open');toggle.setAttribute('aria-expanded','false')}));
 const video=document.getElementById('heroVideo');
 const hero=document.getElementById('top');
+// Hard-disable normal playback: this hero is controlled only by scroll position.
 video.removeAttribute('autoplay');
 video.removeAttribute('loop');
+video.removeAttribute('controls');
 video.autoplay=false;
 video.loop=false;
+video.controls=false;
+video.defaultMuted=true;
 video.muted=true;
 video.playsInline=true;
 video.pause();
 
 let videoDuration=0;
 let lastScrubTime=-1;
+let isSeekingFromScroll=false;
 function scrubHeroVideo(){
   const maxScroll=hero.offsetHeight-window.innerHeight;
   if(maxScroll<=0 || !videoDuration) return;
   const rect=hero.getBoundingClientRect();
   const progress=Math.max(0,Math.min(1,(-rect.top)/maxScroll));
   const targetTime=progress*videoDuration;
-  if(Math.abs(targetTime-lastScrubTime)>0.035){
+  if(Math.abs(targetTime-lastScrubTime)>0.02){
+    isSeekingFromScroll=true;
     try { video.currentTime=targetTime; lastScrubTime=targetTime; } catch(e) {}
+    requestAnimationFrame(()=>{isSeekingFromScroll=false;video.pause();});
   }
 }
+// If the browser or cached markup tries to start playback, immediately stop it.
+video.addEventListener('play',()=>{video.pause();});
+video.addEventListener('playing',()=>{video.pause();});
 video.addEventListener('loadedmetadata',()=>{
   videoDuration=Number.isFinite(video.duration)?video.duration:0;
   video.pause();
+  lastScrubTime=-1;
   scrubHeroVideo();
 });
-video.addEventListener('play',()=>video.pause());
 window.addEventListener('scroll',scrubHeroVideo,{passive:true});
 window.addEventListener('resize',scrubHeroVideo);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)video.pause();});
 if('IntersectionObserver' in window){const revealObserver=new IntersectionObserver(entries=>entries.forEach(entry=>{if(entry.isIntersecting){entry.target.classList.add('visible');revealObserver.unobserve(entry.target)}}),{threshold:.12});document.querySelectorAll('.reveal').forEach(el=>revealObserver.observe(el));}else{document.querySelectorAll('.reveal').forEach(el=>el.classList.add('visible'))}
 </script>
 </body>
